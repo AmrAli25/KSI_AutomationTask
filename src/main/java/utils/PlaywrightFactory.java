@@ -42,6 +42,11 @@ public class PlaywrightFactory {
         browserContext = browser.newContext(new Browser.NewContextOptions().setViewportSize(1280, 720));
         page = browserContext.newPage();
         page.navigate(url);
+        if (page.locator("#nav-logo").isVisible())
+            return page;
+        else {
+            page.reload();
+        }
         return page;
     }
 
