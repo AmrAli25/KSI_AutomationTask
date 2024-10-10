@@ -1,29 +1,122 @@
 package pages;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import io.qameta.allure.Step;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 public class SearchPage {
 
+    // Locators
     private final Page page;
-    private final String searchResultText = "h2[class=\"a-size-medium-plus a-spacing-none a-color-base a-text-bold\"]";
+    private final String searchResultText = "div[class='s-no-outline']>h2[class='a-size-medium-plus a-spacing-none a-color-base a-text-bold']";
+    private final String searchText = "//div[@class=\"a-section a-spacing-small a-spacing-top-small\"]//span[@class=\"a-color-state a-text-bold\"]";
+    private final String categoryResultText = "div[class=\"fst-h1-st pageBanner\"]>h1";
+    private final String sortButton = "#a-autoid-0-announce";
+    private final String lowToHighButton = "#s-result-sort-select_1";
+    private final String highToLowButton = "#s-result-sort-select_2";
+    private final String avgReviewButton = "#s-result-sort-select_3";
+    private final String firstProductPrice = "//div[@data-index='3']//span[@class=\"a-price-whole\"]";
+    private final String lastProductPrice = "//div[@data-index='40']//span[@class=\"a-price-whole\"]";
+    private final String firstProductRating = "//div[@data-index='3']//span[@class=\"a-icon-alt\"]";
+    private final String lastProductRating = "//div[@data-index='40']//span[@class=\"a-icon-alt\"]";
+    private final String freeShippingText = "div:nth-child(2) > span > .a-color-base";
+
+
+    // Variables
+    private final String lowToHigh = "Price: Low to High";
+    private final String highToLow = "Price: High to Low";
+    private final String avgReview = "Avg. Customer Review";
+    private final String filterBrand = "Lenovo";
+    private final String filterShipping = "Free Shipping";
+    private final String freeShipping = "Fulfilled by Amazon - FREE Shipping";
+
 
     public SearchPage(Page page) {
         this.page = page;
     }
 
-    // Validations
-    public SearchPage verifySuccessfulSearchWithKeyword(){
-        String searchTitle = page.textContent(searchResultText);
-        assertEquals(searchTitle,"Results");
+    // Actions
+    @Step("Select Low to High sorting option from Dropdown menu")
+    public SearchPage sortProductLowToHigh() {
+        page.locator(sortButton).getByText("Featured").click();
+        page.getByRole(AriaRole.OPTION, new Page.GetByRoleOptions().setName(lowToHigh)).locator(lowToHighButton).click();
         return this;
     }
 
-    @Step("Highlight the Results text")
-    public void highlightSearchResults(){
-        page.locator(searchResultText).highlight();
+    @Step("Select High to Low sorting option from Dropdown menu")
+    public SearchPage sortProductHighToLow() {
+        page.locator(sortButton).getByText("Featured").click();
+        page.getByRole(AriaRole.OPTION, new Page.GetByRoleOptions().setName(highToLow)).locator(highToLowButton).click();
+        return this;
     }
+
+    @Step("Select Avg customer review sorting option from Dropdown menu")
+    public SearchPage sortProductAvgReview() {
+        page.locator(sortButton).click();
+        page.getByRole(AriaRole.OPTION, new Page.GetByRoleOptions().setName(avgReview)).locator(avgReviewButton).click();
+        return this;
+    }
+
+    @Step("Select A filterBrand option (Lenovo)")
+    public SearchPage filterByBrand() {
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(filterBrand).setExact(true)).click();
+        return this;
+    }
+
+    @Step("Select A filterBrand option (Free Shipping)")
+    public SearchPage filterByFreeShipping() {
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(filterShipping)).click();
+        return this;
+    }
+
+
+    // Validations
+    @Step("Verify correct search results for the keyword provided in search bar")
+    public SearchPage verifySuccessfulSearchWithKeyword(String searchKeyword) {
+        assertEquals(page.textContent(searchText), "\"" + searchKeyword + "\"");
+        assertTrue(page.locator(searchResultText).first().isVisible());
+        return this;
+    }
+
+    @Step("Verify correct search results for the category selected from search bar")
+    public SearchPage verifySuccessfulSearchWithCategory(String category) {
+        assertEquals(page.textContent(categoryResultText), category);
+        return this;
+    }
+
+    @Step("Verify correct search results for the sorting option selected")
+    public SearchPage verifySuccessfulSearchResultsSorting(String sortingOption) {
+        switch (sortingOption) {
+            case "LOW_TO_HIGH":
+                assertTrue(Integer.parseInt((page.locator(firstProductPrice).textContent().trim().replace(".", "").replace(",", ""))) <
+                        Integer.parseInt(page.locator(lastProductPrice).textContent().trim().replace(".", "").replace(",", "")));
+                break;
+            case "HIGH_TO_LOW":
+                assertTrue(Integer.parseInt((page.locator(firstProductPrice).textContent().trim().replace(".", "").replace(",", ""))) >
+                        Integer.parseInt(page.locator(lastProductPrice).textContent().trim().replace(".", "").replace(",", "")));
+                break;
+            case "AVG":
+                assertNotEquals(page.locator(lastProductRating).textContent(), page.locator(firstProductRating).textContent());
+                break;
+            default:
+                System.out.println("Something went wrong");
+        }
+        return this;
+    }
+
+    @Step("Verify correct filter Brand option is applied")
+    public SearchPage verifySuccessfulSearchResultsFilteringByBrand() {
+        assertTrue(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(filterBrand).setExact(true)).isChecked());
+        return this;
+    }
+
+    @Step("Verify correct filter Free shipping option is applied")
+    public SearchPage verifySuccessfulSearchResultsFilteringByFreeShipping() {
+        assertTrue(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(filterShipping)).isChecked());
+        assertEquals(page.locator(freeShippingText).first().textContent(), freeShipping);
+        return this;
+    }
+
 }
