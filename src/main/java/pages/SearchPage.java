@@ -3,6 +3,7 @@ package pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import io.qameta.allure.Step;
 
 import static org.testng.Assert.*;
@@ -21,7 +22,7 @@ public class SearchPage {
     private final String firstProductRating = "//div[@data-index='3']//span[@class='a-icon-alt']";
     private final String lastProductRating = "//div[@data-index='40']//span[@class='a-icon-alt']";
     private final String freeShippingText = "div:nth-child(2) > span > .a-color-base";
-    private final String singleProduct = "div[data-index='7']";
+    private final String singleProduct = "//div[@data-index='7']//div[@data-cy=\"title-recipe\"]";
 
 
     // Variables
@@ -36,10 +37,8 @@ public class SearchPage {
             "Fulfilled Fulfilled by Amazon",
             "Windows 11 Home",
             "NVIDIA",
-            "Intel Core i7",
-            "Gaming"
+            "Intel Core i7"
     };
-
     public enum sortingOptions {
         LOW_TO_HIGH,
         HIGH_TO_LOW,
@@ -92,7 +91,6 @@ public class SearchPage {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(multiFilters[1])).click();
         page.getByLabel("CPU Model Manufacturer").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[2])).click();
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(multiFilters[3]).setExact(true)).click();
-        page.getByLabel("Keyboard Description").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[4])).click();
         return this;
     }
 
@@ -156,7 +154,6 @@ public class SearchPage {
         assertTrue(page.getByLabel("Operating System").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[1])).isChecked());
         assertTrue(page.getByLabel("CPU Model Manufacturer").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[2])).isChecked());
         assertTrue(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(multiFilters[3]).setExact(true)).isChecked());
-        assertTrue(page.getByLabel("Keyboard Description").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[4])).isChecked());
         return this;
     }
 

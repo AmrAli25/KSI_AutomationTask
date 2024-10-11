@@ -44,8 +44,14 @@ public class CheckoutPage {
         page.locator(placeOrderButton).waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         int singleProductPrice = Integer.parseInt(page.locator(productPrice).textContent().trim().replace("EGP ", "").replace(".00", ""));
         int qnt = Integer.parseInt(page.locator(quantity).textContent().trim());
-        int orderPrice = Integer.parseInt(page.locator(totalPrice).textContent().trim().replace("Order total:EGP ", "").replace(".00", ""));
-        assertEquals((singleProductPrice * qnt), orderPrice);
+        String orderPrice = page.locator(totalPrice).textContent().trim().replace("Order total:EGP ", "").replace(".00", "");
+        int orderPriceNum;
+        if (orderPrice.contains(",")) {
+            orderPriceNum = Integer.parseInt(orderPrice.replace(",", ""));
+        } else
+            orderPriceNum = Integer.parseInt(orderPrice);
+
+        assertEquals((singleProductPrice * qnt), orderPriceNum);
         return this;
     }
 
