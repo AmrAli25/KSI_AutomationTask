@@ -19,6 +19,7 @@ This is a task for KSI to automate two test cases Using PlayWright with Java:
 * Allure reports to provide a comprehensive report about the test cases and their status
 
 ## How to run the project (Prerequisites):
+* Java 23 should be installed to be able to run this project or you can change the version from the pom.xml file to the one you want
 * Using [Maven](https://maven.apache.org) installed on your machine
   - Clone the repo on your machine
   - run the command "mvn verify" in an opened terminal in the project directory
