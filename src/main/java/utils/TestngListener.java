@@ -1,10 +1,9 @@
 package utils;
 
 import org.testng.*;
-import org.testng.internal.IResultListener;
 
 
-public class TestNGListener implements ITestListener {
+public class TestngListener implements ITestListener {
 
 
     // Called when a test case starts

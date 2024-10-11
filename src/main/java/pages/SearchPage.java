@@ -1,5 +1,6 @@
 package pages;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import io.qameta.allure.Step;
@@ -9,7 +10,6 @@ import static org.testng.Assert.*;
 public class SearchPage {
 
     // Locators
-    private final Page page;
     private final String searchResultText = "div[class='s-no-outline']>h2[class='a-size-medium-plus a-spacing-none a-color-base a-text-bold']";
     private final String searchText = "//div[@class=\"a-section a-spacing-small a-spacing-top-small\"]//span[@class=\"a-color-state a-text-bold\"]";
     private final String categoryResultText = "div[class=\"fst-h1-st pageBanner\"]>h1";
@@ -17,20 +17,29 @@ public class SearchPage {
     private final String lowToHighButton = "#s-result-sort-select_1";
     private final String highToLowButton = "#s-result-sort-select_2";
     private final String avgReviewButton = "#s-result-sort-select_3";
-    private final String firstProductPrice = "//div[@data-index='3']//span[@class=\"a-price-whole\"]";
-    private final String lastProductPrice = "//div[@data-index='40']//span[@class=\"a-price-whole\"]";
-    private final String firstProductRating = "//div[@data-index='3']//span[@class=\"a-icon-alt\"]";
-    private final String lastProductRating = "//div[@data-index='40']//span[@class=\"a-icon-alt\"]";
+    private final String firstProductPrice = "//div[@data-index='3']//span[@class='a-price-whole']";
+    private final String lastProductPrice = "//div[@data-index='40']//span[@class='a-price-whole']";
+    private final String firstProductRating = "//div[@data-index='3']//span[@class='a-icon-alt']";
+    private final String lastProductRating = "//div[@data-index='40']//span[@class='a-icon-alt']";
     private final String freeShippingText = "div:nth-child(2) > span > .a-color-base";
+    private final String singleProduct = "div[data-index='6']";
 
 
     // Variables
+    private final Page page;
     private final String lowToHigh = "Price: Low to High";
     private final String highToLow = "Price: High to Low";
     private final String avgReview = "Avg. Customer Review";
     private final String filterBrand = "Lenovo";
     private final String filterShipping = "Free Shipping";
     private final String freeShipping = "Fulfilled by Amazon - FREE Shipping";
+    private final String[] multiFilters = {
+            "Fulfilled Fulfilled by Amazon",
+            "Windows 11 Home",
+            "NVIDIA",
+            "Intel Core i7",
+            "Gaming"
+    };
 
 
     public SearchPage(Page page) {
@@ -69,6 +78,23 @@ public class SearchPage {
     public SearchPage filterByFreeShipping() {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(filterShipping)).click();
         return this;
+    }
+
+    @Step("Select A Multi filters options")
+    public SearchPage applyMultiFilters() {
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(multiFilters[0])).click();
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(filterBrand).setExact(true)).click();
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(multiFilters[1])).click();
+        page.getByLabel("CPU Model Manufacturer").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[2])).click();
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(multiFilters[3]).setExact(true)).click();
+        page.getByLabel("Keyboard Description").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[4])).click();
+        return this;
+    }
+
+    @Step("Select an item to add to cart")
+    public ProductPage selectProductToAddToCart() {
+        page.locator(singleProduct).click();
+        return new ProductPage(page);
     }
 
 
@@ -118,5 +144,17 @@ public class SearchPage {
         assertEquals(page.locator(freeShippingText).first().textContent(), freeShipping);
         return this;
     }
+
+    @Step("Verify correct filters is applied ")
+    public SearchPage verifySuccessfulSearchResultsMultiFilters() {
+        assertTrue(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(multiFilters[0])).isChecked());
+        assertTrue(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(filterBrand).setExact(true)).isChecked());
+        assertTrue(page.getByLabel("Operating System").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[1])).isChecked());
+        assertTrue(page.getByLabel("CPU Model Manufacturer").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[2])).isChecked());
+        assertTrue(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(multiFilters[3]).setExact(true)).isChecked());
+        assertTrue(page.getByLabel("Keyboard Description").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[4])).isChecked());
+        return this;
+    }
+
 
 }
