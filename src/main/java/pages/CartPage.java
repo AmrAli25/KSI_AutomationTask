@@ -10,18 +10,14 @@ public class CartPage {
 
     // Variables
     private final Page page;
-    private final String checkoutButtonText = "\n" +
-            "                    Proceed to Buy\n" +
-            "                    (2 items)\n" +
-            "                    \n" +
-            "                ";
 
 
     // Locators
-    private final String cartQuantity = "div[data-feature-id='proceed-to-checkout-label']";
+    private final String proceedButton = "input[data-feature-id='proceed-to-checkout-action']";
     private final String logoButton = "#nav-logo-sprites";
     private final String deleteButton = "input[value='Delete']";
     private final String cartCount = "#nav-cart-count";
+    private final String quantity = "2";
 
     // Constructor
     public CartPage(Page page) {
@@ -30,9 +26,9 @@ public class CartPage {
 
     // Actions
     @Step("Continue to the checkout page")
-    public CheckoutPage proceedToCheckout() {
-        page.getByLabel(checkoutButtonText).click();
-        return new CheckoutPage(page);
+    public PrimeAdPage proceedToCheckout() {
+        page.locator(proceedButton).click();
+        return new PrimeAdPage(page);
     }
 
     @Step("Navigate to the cart")
@@ -46,7 +42,7 @@ public class CartPage {
     // Validations
     @Step("Verify the quantity added to the cart")
     public CartPage verifyCartQuantity() {
-        assertEquals(page.locator(cartCount).textContent().trim(), "2");
+        assertEquals(page.locator(cartCount).textContent().trim(), quantity);
         return this;
     }
 }

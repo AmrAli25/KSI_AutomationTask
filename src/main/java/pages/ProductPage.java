@@ -11,10 +11,10 @@ public class ProductPage {
     // Variables
     private final Page page;
     private final String quantity = "2";
-    private final String addToCart = "Add to Cart";
 
 
     // Locators
+    private final String addToCart = "#add-to-cart-button";
 
     // Constructor
     public ProductPage(Page page) {
@@ -26,14 +26,14 @@ public class ProductPage {
     public CartPage addItemsToTheCart() {
         page.getByText("Quantity:1").click();
         page.getByLabel(quantity, new Page.GetByLabelOptions().setExact(true)).getByText(quantity).click();
-        page.getByLabel(addToCart, new Page.GetByLabelOptions().setExact(true)).click();
+        page.locator(addToCart).click();
         return new CartPage(page);
     }
 
     // Validations
     @Step("Verify add to cart button is visible")
     public ProductPage verifyAddToCartButtonVisibility() {
-        assertTrue(page.locator("#add-to-cart-button").isEnabled());
+        assertTrue(page.locator(addToCart).isEnabled());
         return this;
     }
 

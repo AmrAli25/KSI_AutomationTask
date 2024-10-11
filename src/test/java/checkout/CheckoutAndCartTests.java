@@ -19,7 +19,7 @@ public class CheckoutAndCartTests {
     private PlaywrightFactory playwrightFactory;
     private Page page;
     private Properties properties;
-    private final String keyword = "stand";
+    private final String keyword = "headphones wired";
     private final String phone = "01505298035";
     private final String password = "123456789aA@";
 
@@ -31,9 +31,21 @@ public class CheckoutAndCartTests {
         page = playwrightFactory.initBrowser(properties);
     }
 
-    @Description("A user sign in using phone and password, adds two products to the cart, go to checkout" +
-            "completes shipping address, choose payment method, and complete the order flow")
-    @Test(description = "E2E for order flow")
+    @Test(description = "E2E for order flow - GUI")
+    @Description("""
+            A user sign in using phone and password, adds two products to the cart, go to checkout
+            completes shipping address, choose payment method, and complete the order flow
+            Steps:
+            - User sign in with Phone and Password
+            - Check for products in the cart and clear them
+            - Search with keyword
+            - Select a product
+            - Add two quantity of the product to the cart
+            - Go to checkout page
+            - Select Shipping address
+            - Select payment method
+            - Verify order price is correct
+            """)
     public void addToCartAndCheckoutFlow() {
         new HomePage(page).verifySingInButtonVisibility()
                 .clickSignInButton()
@@ -44,10 +56,16 @@ public class CheckoutAndCartTests {
                 .clearTheCart()
                 .useSearchFieldWithKeyword(keyword)
                 .verifySuccessfulSearchWithKeyword(keyword)
+                .verifyProductVisibility()
                 .selectProductToAddToCart()
                 .verifyAddToCartButtonVisibility()
                 .addItemsToTheCart()
-                .verifyCartQuantity();
+                .verifyCartQuantity()
+                .proceedToCheckout()
+                .byPassPrimeAd()
+                .selectAddress()
+                .verifyOrderDetails()
+                .verifyPlaceOrderButtonIsEnabled();
     }
 
 

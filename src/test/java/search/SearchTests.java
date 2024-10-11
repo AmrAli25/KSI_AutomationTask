@@ -7,6 +7,7 @@ import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import org.testng.annotations.*;
 import pages.HomePage;
+import pages.SearchPage;
 import utils.PlaywrightFactory;
 import utils.TestngListener;
 
@@ -56,7 +57,7 @@ public class SearchTests {
         new HomePage(page).verifySearchBarVisablility()
                 .useSearchFieldWithKeyword(keyword)
                 .sortProductLowToHigh()
-                .verifySuccessfulSearchResultsSorting("LOW_TO_HIGH");
+                .verifySuccessfulSearchResultsSorting(SearchPage.sortingOptions.LOW_TO_HIGH);
     }
 
     @Description("A user search with a keyword in the search field, and sort data from High to Low and validate the data displayed.")
@@ -65,7 +66,7 @@ public class SearchTests {
         new HomePage(page).verifySearchBarVisablility()
                 .useSearchFieldWithKeyword(keyword)
                 .sortProductHighToLow()
-                .verifySuccessfulSearchResultsSorting("HIGH_TO_LOW");
+                .verifySuccessfulSearchResultsSorting(SearchPage.sortingOptions.HIGH_TO_LOW);
 
     }
 
@@ -75,7 +76,7 @@ public class SearchTests {
         new HomePage(page).verifySearchBarVisablility()
                 .useSearchFieldWithKeyword(keyword)
                 .sortProductAvgReview()
-                .verifySuccessfulSearchResultsSorting("AVG");
+                .verifySuccessfulSearchResultsSorting(SearchPage.sortingOptions.AVG_REVIEW);
     }
 
     @Description("A user search with a keyword in the search field, and select a brand filter, Validate the data displayed.")

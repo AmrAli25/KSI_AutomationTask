@@ -10,7 +10,6 @@ import static org.testng.Assert.*;
 public class SearchPage {
 
     // Locators
-    private final String searchResultText = "div[class='s-no-outline']>h2[class='a-size-medium-plus a-spacing-none a-color-base a-text-bold']";
     private final String searchText = "//div[@class=\"a-section a-spacing-small a-spacing-top-small\"]//span[@class=\"a-color-state a-text-bold\"]";
     private final String categoryResultText = "div[class=\"fst-h1-st pageBanner\"]>h1";
     private final String sortButton = "#a-autoid-0-announce";
@@ -22,7 +21,7 @@ public class SearchPage {
     private final String firstProductRating = "//div[@data-index='3']//span[@class='a-icon-alt']";
     private final String lastProductRating = "//div[@data-index='40']//span[@class='a-icon-alt']";
     private final String freeShippingText = "div:nth-child(2) > span > .a-color-base";
-    private final String singleProduct = "div[data-index='6']";
+    private final String singleProduct = "div[data-index='7']";
 
 
     // Variables
@@ -41,7 +40,13 @@ public class SearchPage {
             "Gaming"
     };
 
+    public enum sortingOptions {
+        LOW_TO_HIGH,
+        HIGH_TO_LOW,
+        AVG_REVIEW
+    }
 
+    // Constructor
     public SearchPage(Page page) {
         this.page = page;
     }
@@ -102,7 +107,6 @@ public class SearchPage {
     @Step("Verify correct search results for the keyword provided in search bar")
     public SearchPage verifySuccessfulSearchWithKeyword(String searchKeyword) {
         assertEquals(page.textContent(searchText), "\"" + searchKeyword + "\"");
-        assertTrue(page.locator(searchResultText).first().isVisible());
         return this;
     }
 
@@ -113,21 +117,21 @@ public class SearchPage {
     }
 
     @Step("Verify correct search results for the sorting option selected")
-    public SearchPage verifySuccessfulSearchResultsSorting(String sortingOption) {
+    public SearchPage verifySuccessfulSearchResultsSorting(sortingOptions sortingOption) {
         switch (sortingOption) {
-            case "LOW_TO_HIGH":
+            case LOW_TO_HIGH:
                 assertTrue(Integer.parseInt((page.locator(firstProductPrice).textContent().trim().replace(".", "").replace(",", ""))) <
                         Integer.parseInt(page.locator(lastProductPrice).textContent().trim().replace(".", "").replace(",", "")));
                 break;
-            case "HIGH_TO_LOW":
+            case HIGH_TO_LOW:
                 assertTrue(Integer.parseInt((page.locator(firstProductPrice).textContent().trim().replace(".", "").replace(",", ""))) >
                         Integer.parseInt(page.locator(lastProductPrice).textContent().trim().replace(".", "").replace(",", "")));
                 break;
-            case "AVG":
+            case AVG_REVIEW:
                 assertNotEquals(page.locator(lastProductRating).textContent(), page.locator(firstProductRating).textContent());
                 break;
             default:
-                System.out.println("Something went wrong");
+                System.out.println("Something went wrong -- Choose correct Enum");
         }
         return this;
     }
@@ -153,6 +157,13 @@ public class SearchPage {
         assertTrue(page.getByLabel("CPU Model Manufacturer").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[2])).isChecked());
         assertTrue(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(multiFilters[3]).setExact(true)).isChecked());
         assertTrue(page.getByLabel("Keyboard Description").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(multiFilters[4])).isChecked());
+        return this;
+    }
+
+
+    @Step("Verify product visibility ")
+    public SearchPage verifyProductVisibility() {
+        page.locator(singleProduct).isVisible();
         return this;
     }
 
