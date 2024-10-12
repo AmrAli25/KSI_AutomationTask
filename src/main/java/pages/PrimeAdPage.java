@@ -11,6 +11,7 @@ public class PrimeAdPage {
 
     // Locators
     private final String byPassButton = "#prime-declineCTA";
+    private final String byPassButtonMain = "#prime-interstitial-nothanks-button";
 
     // Constructor
     public PrimeAdPage(Page page) {
@@ -20,7 +21,12 @@ public class PrimeAdPage {
     // Actions
     @Step("Bypass Prime Ad page")
     public CheckoutPage byPassPrimeAd() {
-        page.locator(byPassButton).click();
+        if(page.locator(byPassButton).isVisible())
+            page.locator(byPassButton).click();
+        else{
+            page.locator(byPassButtonMain).click();
+        }
+
         page.reload();
         return new CheckoutPage(page);
     }
