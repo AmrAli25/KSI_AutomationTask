@@ -16,6 +16,8 @@ public class CheckoutPage {
 
     // Locators
     private final String changeAddressButton = "#addressChangeLinkId";
+    private final String PaymentMethodRadioButton = "input[value=\"instrumentId=0h_PE_CUS_4a99cc0c-4a23-446f-bdea-3ee246a431da&isExpired=false&paymentMethod=CC&tfxEligible=false\"]";
+    private final String submitPaymentMethod = "input[name=\"ppw-widgetEvent:SetPaymentPlanSelectContinueEvent\"]";
     private final String placeOrderButton = "#bottomSubmitOrderButtonId";
     private final String productPrice = "span[class=\"a-color-price\"]";
     private final String totalPrice = "span[id='subtotals-marketplace-spp-bottom']>span[class=\"a-size-medium a-color-price subtotal-amount a-text-bold\"]";
@@ -33,6 +35,13 @@ public class CheckoutPage {
         page.locator(changeAddressButton).click();
         page.getByLabel("Amr Test Talaat Harb Street, Princess Tower, New Cairo City, Cairo, Egypt").check();
         page.getByTestId("Address_selectShipToThisAddress").click();
+        return new CheckoutPage(page);
+    }
+
+    @Step("Select a payment method")
+    public CheckoutPage selectPayment() {
+        page.locator(PaymentMethodRadioButton).check();
+        page.locator(submitPaymentMethod).first().click();
         return new CheckoutPage(page);
     }
 

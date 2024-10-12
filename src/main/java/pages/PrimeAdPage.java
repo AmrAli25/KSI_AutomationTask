@@ -10,7 +10,7 @@ public class PrimeAdPage {
     private Page page;
 
     // Locators
-    private final String byPassButton = "#prime-interstitial-nothanks-button";
+    private final String byPassButton = "#prime-declineCTA";
 
     // Constructor
     public PrimeAdPage(Page page) {

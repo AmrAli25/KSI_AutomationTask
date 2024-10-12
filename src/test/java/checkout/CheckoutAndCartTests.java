@@ -64,6 +64,7 @@ public class CheckoutAndCartTests {
                 .proceedToCheckout()
                 .byPassPrimeAd()
                 .selectAddress()
+                .selectPayment()
                 .verifyOrderDetails()
                 .verifyPlaceOrderButtonIsEnabled();
     }
